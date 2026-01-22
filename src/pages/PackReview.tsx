@@ -354,11 +354,7 @@ Generate a comprehensive negotiation pack in JSON format:
                         <div className="flex items-center gap-3 mb-4">
                             <span className="bg-blue-600/10 text-blue-500 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Step 2</span>
                             <div className="h-px w-24 bg-white/5" />
-                            <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${deal?.status === 'approved' || deal?.status === 'meeting_done' ? 'bg-green-500/10 text-green-500' :
-                                deal?.status === 'in_review' ? 'bg-amber-500/10 text-amber-500' :
-                                    deal?.status === 'rejected' ? 'bg-red-500/10 text-red-500' :
-                                        'bg-white/5 text-gray-500'
-                                }`}>
+                            <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-white/5 text-gray-500">
                                 {deal?.status.replace('_', ' ')}
                             </span>
                         </div>
@@ -370,97 +366,45 @@ Generate a comprehensive negotiation pack in JSON format:
                     </div>
 
                     <div className="flex items-center gap-4">
-                        {/* Employee Actions */}
-                        {profile?.role !== 'admin' && (
-                            <>
-                                {(deal?.status === 'pack_generated' || deal?.status === 'changes_requested') && (
-                                    <>
-                                        <button
-                                            onClick={() => navigate(`/new-deal?id=${id}`)}
-                                            className="flex items-center gap-2 px-5 py-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-all text-sm font-bold"
-                                        >
-                                            <Edit3 className="w-4 h-4" />
-                                            Edit Deal Info
-                                        </button>
-                                        <button
-                                            onClick={() => generatePack(deal)}
-                                            disabled={isGenerating}
-                                            className="flex items-center gap-2 px-5 py-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-all text-sm font-bold disabled:opacity-50"
-                                        >
-                                            <RefreshCw className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
-                                            Regenerate AI
-                                        </button>
-                                        <button
-                                            onClick={() => updateDealStatus('in_review')}
-                                            disabled={actionLoading}
-                                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-8 rounded-xl flex items-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50"
-                                        >
-                                            {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
-                                            Submit for Approval
-                                        </button>
-                                    </>
-                                )}
-                            </>
-                        )}
-
-                        {/* Admin Actions */}
-                        {profile?.role === 'admin' && (
-                            <div className="flex items-center gap-3">
-                                {deal?.status === 'in_review' && (
-                                    <>
-                                        <button
-                                            onClick={() => { setFeedbackType('changes'); setShowFeedbackModal(true); }}
-                                            className="px-5 py-3 rounded-xl border border-amber-500/20 text-amber-500 hover:bg-amber-500/5 transition-all text-sm font-bold"
-                                        >
-                                            Request Changes
-                                        </button>
-                                        <button
-                                            onClick={() => { setFeedbackType('reject'); setShowFeedbackModal(true); }}
-                                            className="px-5 py-3 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-500/5 transition-all text-sm font-bold"
-                                        >
-                                            Reject Deal
-                                        </button>
-                                        <button
-                                            onClick={() => updateDealStatus('approved')}
-                                            disabled={actionLoading}
-                                            className="bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-8 rounded-xl flex items-center gap-3 transition-all shadow-xl shadow-green-500/20 disabled:opacity-50"
-                                        >
-                                            {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-5 h-5" />}
-                                            Approve Strategy
-                                        </button>
-                                    </>
-                                )}
-
-                                {deal?.status === 'rejected' && (
-                                    <button
-                                        onClick={() => updateDealStatus('changes_requested', 'Reopened for Revision')}
-                                        disabled={actionLoading}
-                                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-8 rounded-xl flex items-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50"
-                                    >
-                                        {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-                                        Reopen for Revision
-                                    </button>
-                                )}
-                            </div>
-                        )}
-
-                        {(deal?.status === 'approved' || deal?.status === 'meeting_done') && (
-                            <button
-                                onClick={() => navigate(`/meeting/${id}`)}
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-8 rounded-xl flex items-center gap-3 transition-all shadow-xl shadow-indigo-500/20"
+                        <div className="flex items-center gap-3">
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => navigate(`/new-deal?id=${id}`)}
+                                className="group relative p-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-all"
                             >
-                                Manage Meeting Notes
-                                <FileText className="w-5 h-5" />
-                            </button>
-                        )}
+                                <Edit3 className="w-5 h-5" />
+                                <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                    Edit Details
+                                </span>
+                            </motion.button>
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => generatePack(deal)}
+                                disabled={isGenerating}
+                                className="group relative p-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-all disabled:opacity-50"
+                            >
+                                <RefreshCw className={`w-5 h-5 ${isGenerating ? 'animate-spin' : ''}`} />
+                                <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                    Regenerate Pack
+                                </span>
+                            </motion.button>
+                        </div>
+
+
                         {pack && (
-                            <button
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                                 onClick={downloadStrategy}
-                                className="bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 px-6 rounded-xl flex items-center gap-2 transition-all border border-white/5"
+                                className="group relative bg-white/5 hover:bg-white/10 text-white p-3 rounded-xl flex items-center justify-center transition-all border border-white/5"
                             >
                                 <Download className="w-5 h-5" />
-                                Download Strategy
-                            </button>
+                                <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                    Download Strategy
+                                </span>
+                            </motion.button>
                         )}
                     </div>
                 </header>
@@ -476,7 +420,17 @@ Generate a comprehensive negotiation pack in JSON format:
                         <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
                         <h3 className="text-xl font-bold text-white mb-2">Something went wrong</h3>
                         <p className="text-gray-400 mb-6">{error}</p>
-                        <button onClick={() => fetchData()} className="bg-white/5 hover:bg-white/10 text-white px-6 py-2 rounded-xl transition-all">Retry</button>
+                        <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => fetchData()}
+                            className="group relative bg-white/5 hover:bg-white/10 text-white p-3 rounded-xl transition-all"
+                        >
+                            <RefreshCw className="w-5 h-5" />
+                            <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                Retry Loading
+                            </span>
+                        </motion.button>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

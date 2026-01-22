@@ -65,9 +65,7 @@ export const DealIntake = () => {
             setCurrentStatus(data.status);
             setIsEditing(true);
 
-            if (data.status === 'in_review' || data.status === 'approved') {
-                setError(`This deal is currently "${data.status.replace('_', ' ')}" and cannot be edited.`);
-            }
+
         } catch (err: any) {
             setError("Failed to load deal information.");
         } finally {
@@ -133,7 +131,7 @@ export const DealIntake = () => {
         }
     };
 
-    const isDisabled = currentStatus === 'in_review' || currentStatus === 'approved' || currentStatus === 'rejected';
+    const isDisabled = false;
 
     if (fetching) return (
         <div className="min-h-screen bg-[#050A10] flex items-center justify-center">
@@ -295,34 +293,38 @@ export const DealIntake = () => {
                         </div>
 
                         <div className="pt-6 flex justify-end gap-4">
-                            <button
-                                type="button"
-                                disabled={loading || isDisabled}
-                                onClick={() => handleSave(false)}
-                                className="bg-white/5 hover:bg-white/10 text-white font-bold py-4 px-10 rounded-2xl flex items-center gap-3 transition-all border border-white/10"
-                            >
-                                <Save className="w-5 h-5" />
-                                Save as Draft
-                            </button>
+                            {currentStatus === 'draft' && (
+                                <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    type="button"
+                                    disabled={loading || isDisabled}
+                                    onClick={() => handleSave(false)}
+                                    className="group relative bg-white/5 hover:bg-white/10 text-white p-5 rounded-2xl flex items-center justify-center transition-all border border-white/10"
+                                >
+                                    <Save className="w-5 h-5" />
+                                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                        Save as Draft
+                                    </span>
+                                </motion.button>
+                            )}
 
-                            <button
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                                 type="submit"
                                 disabled={loading || isDisabled}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-2xl flex items-center gap-3 transition-all shadow-xl shadow-blue-500/2"
+                                className="group relative bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl flex items-center justify-center transition-all shadow-xl shadow-blue-500/2"
                             >
                                 {loading ? (
-                                    <>
-                                        <Loader2 className="w-5 h-5 animate-spin" />
-                                        Processing...
-                                    </>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
                                 ) : (
-                                    <>
-                                        <Sparkles className="w-5 h-5 text-blue-200" />
-                                        Process Strategy Pack
-                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                    </>
+                                    <Sparkles className="w-5 h-5 text-blue-200" />
                                 )}
-                            </button>
+                                <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                    {loading ? 'Processing...' : (currentStatus === 'pack_generated' ? 'Update & View Strategy' : 'Process Strategy Pack')}
+                                </span>
+                            </motion.button>
                         </div>
                     </form>
                 </div>

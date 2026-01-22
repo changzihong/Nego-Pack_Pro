@@ -5,13 +5,12 @@ ALTER TABLE public.users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'employee'; 
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.users (id, email, full_name, department, role)
+  INSERT INTO public.users (id, email, full_name, role)
   VALUES (
     NEW.id,
     NEW.email,
     NEW.raw_user_meta_data->>'full_name',
-    NEW.raw_user_meta_data->>'department',
-    COALESCE(NEW.raw_user_meta_data->>'role', 'employee')
+    'admin'
   );
   RETURN NEW;
 END;

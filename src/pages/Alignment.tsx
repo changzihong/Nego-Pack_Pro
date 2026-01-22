@@ -96,14 +96,12 @@ export const Alignment = () => {
                             {deal?.status.replace('_', ' ')}
                         </span>
                     </div>
-                    {profile?.role === 'admin' && (
-                        <button
-                            onClick={() => navigate(`/pack/${id}`)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg text-sm transition-all shadow-lg shadow-blue-500/20"
-                        >
-                            Go to Approval
-                        </button>
-                    )}
+                    <button
+                        onClick={() => navigate(`/pack/${id}`)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg text-sm transition-all shadow-lg shadow-blue-500/20"
+                    >
+                        Go to Strategy
+                    </button>
                 </div>
             </header>
 

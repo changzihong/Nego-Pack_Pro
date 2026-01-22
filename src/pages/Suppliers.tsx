@@ -129,17 +129,21 @@ export const Suppliers = () => {
                     <h1 className="text-3xl font-bold text-white mb-2">Supplier Registry</h1>
                     <p className="text-gray-400">Manage your organization's list of strategic partners</p>
                 </div>
-                <button
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => {
                         setEditingSupplier(null);
                         setSupplierForm({ name: '', contact_person: '', email: '', phone: '', category: '' });
                         setAddingSupplier(true);
                     }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20"
+                    className="group relative bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl flex items-center justify-center transition-all shadow-lg shadow-blue-500/20"
                 >
                     <PlusCircle className="w-5 h-5" />
-                    Add Supplier
-                </button>
+                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                        Add New Supplier
+                    </span>
+                </motion.button>
             </header>
 
             {/* Search */}
@@ -168,7 +172,9 @@ export const Suppliers = () => {
                         <motion.div
                             key={supplier.id}
                             layout
-                            className="bg-[#0B1219] rounded-2xl border border-white/5 p-6 hover:border-blue-500/30 transition-all group relative overflow-hidden"
+                            whileHover={{ scale: 1.02, y: -5 }}
+                            onClick={() => startEdit(supplier)}
+                            className="bg-[#0B1219] rounded-2xl border border-white/5 p-6 hover:border-blue-500/30 transition-all group relative overflow-hidden cursor-pointer"
                         >
                             <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 blur-3xl -mr-12 -mt-12 group-hover:bg-blue-500/10 transition-all" />
 
@@ -178,9 +184,12 @@ export const Suppliers = () => {
                                         <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors truncate">{supplier.name}</h3>
                                         <button
                                             onClick={() => startEdit(supplier)}
-                                            className="p-1.5 rounded-lg bg-white/5 text-gray-500 hover:text-white hover:bg-blue-600/20 transition-all"
+                                            className="group relative p-1.5 rounded-lg bg-white/5 text-gray-500 hover:text-white hover:bg-blue-600/20 transition-all"
                                         >
                                             <Edit2 className="w-3.5 h-3.5" />
+                                            <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[8px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                                Edit
+                                            </span>
                                         </button>
                                     </div>
                                     <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">{supplier.category || 'Uncategorized'}</span>
@@ -205,17 +214,19 @@ export const Suppliers = () => {
                                 </div>
                             </div>
 
-                            {profile?.role === 'admin' && (
-                                <div className="mt-8 pt-6 border-t border-white/5 flex justify-end">
-                                    <button
-                                        onClick={() => fetchSupplierHistory(supplier)}
-                                        className="text-xs font-bold text-blue-500 hover:text-blue-400 flex items-center gap-1 group/btn"
-                                    >
-                                        View Deal History
-                                        <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
-                                    </button>
-                                </div>
-                            )}
+                            <div className="mt-8 pt-6 border-t border-white/5 flex justify-end relative z-10">
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        fetchSupplierHistory(supplier);
+                                    }}
+                                    className="text-xs font-bold text-blue-500 hover:text-blue-400 flex items-center gap-1 group/btn"
+                                >
+                                    View Deal History
+                                    <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                                </motion.button>
+                            </div>
                         </motion.div>
                     ))
                 )}
@@ -292,19 +303,29 @@ export const Suppliers = () => {
                                     />
                                 </div>
                                 <div className="pt-4 flex gap-4">
-                                    <button
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                         type="button"
                                         onClick={() => setAddingSupplier(false)}
-                                        className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 rounded-xl transition-all"
+                                        className="group relative flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center"
                                     >
-                                        Cancel
-                                    </button>
-                                    <button
+                                        <X className="w-5 h-5" />
+                                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                            Cancel
+                                        </span>
+                                    </motion.button>
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                         type="submit"
-                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/20"
+                                        className="group relative flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center"
                                     >
-                                        {editingSupplier ? 'Update Changes' : 'Save Supplier'}
-                                    </button>
+                                        <Handshake className="w-5 h-5" />
+                                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                            {editingSupplier ? 'Update Changes' : 'Save Supplier'}
+                                        </span>
+                                    </motion.button>
                                 </div>
                             </form>
                         </motion.div>
@@ -332,12 +353,17 @@ export const Suppliers = () => {
                                     <p className="text-[10px] font-bold text-blue-500 uppercase tracking-[0.2em] mb-1">Supplier Portfolio</p>
                                     <h2 className="text-3xl font-bold text-white italic">{viewingHistory.name}</h2>
                                 </div>
-                                <button
+                                <motion.button
+                                    whileHover={{ scale: 1.1, rotate: 90 }}
+                                    whileTap={{ scale: 0.9 }}
                                     onClick={() => setViewingHistory(null)}
-                                    className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-all"
+                                    className="group relative w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-all"
                                 >
                                     <X className="w-5 h-5" />
-                                </button>
+                                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                        Close
+                                    </span>
+                                </motion.button>
                             </div>
 
                             <div className="flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">

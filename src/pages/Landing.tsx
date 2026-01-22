@@ -27,13 +27,6 @@ export const Landing = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <Link to="/login" className="text-sm font-bold text-gray-400 hover:text-white transition-colors px-4">Sign In</Link>
-                        <Link
-                            to="/signup"
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-6 rounded-xl transition-all shadow-lg shadow-blue-500/20"
-                        >
-                            Get Started
-                        </Link>
                     </div>
                 </div>
             </nav>
@@ -77,7 +70,7 @@ export const Landing = () => {
                         className="flex flex-col sm:flex-row items-center justify-center gap-4"
                     >
                         <Link
-                            to="/signup"
+                            to="/login"
                             className="w-full sm:w-auto bg-white text-black hover:bg-gray-100 font-bold py-4 px-10 rounded-2xl flex items-center justify-center gap-2 transition-all group text-lg"
                         >
                             Start Your First Deal
@@ -86,50 +79,6 @@ export const Landing = () => {
 
                     </motion.div>
                 </div>
-
-                {/* Dashboard Preview */}
-                <motion.div
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5, duration: 1 }}
-                    className="mt-24 max-w-6xl mx-auto relative px-4"
-                >
-                    <div className="relative rounded-[2.5rem] border border-white/10 bg-[#0B1219] p-4 shadow-3xl overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-t from-blue-600/5 to-transparent pointer-events-none" />
-                        <div className="rounded-[1.5rem] overflow-hidden border border-white/5 shadow-inner">
-                            {/* Visual representation of the app */}
-                            <div className="bg-[#050A10] aspect-[16/9] flex items-center justify-center relative">
-                                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:20px_20px]" />
-                                <div className="z-10 flex flex-col items-center gap-6">
-                                    <div className="flex gap-4">
-                                        <div className="w-48 h-32 bg-[#0B1219] rounded-2xl border border-white/5 p-4 flex flex-col justify-between">
-                                            <BarChart3 className="w-6 h-6 text-blue-500" />
-                                            <div className="h-2 w-full bg-white/5 rounded" />
-                                            <div className="h-2 w-3/4 bg-white/5 rounded" />
-                                        </div>
-                                        <div className="w-48 h-32 bg-blue-600/20 rounded-2xl border border-blue-500/30 p-4 flex flex-col justify-between">
-                                            <Zap className="w-6 h-6 text-blue-400" />
-                                            <div className="h-2 w-full bg-blue-400/20 rounded" />
-                                            <div className="h-2 w-1/2 bg-blue-400/20 rounded" />
-                                        </div>
-                                    </div>
-                                    <div className="w-96 h-40 bg-[#0B1219] rounded-2xl border border-white/5 p-6 space-y-4">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-white/5" />
-                                            <div className="space-y-2 flex-1">
-                                                <div className="h-2 w-1/2 bg-white/10 rounded" />
-                                                <div className="h-2 w-1/4 bg-white/5 rounded" />
-                                            </div>
-                                        </div>
-                                        <div className="h-2 w-full bg-white/5 rounded" />
-                                        <div className="h-2 w-full bg-white/5 rounded" />
-                                        <div className="h-2 w-3/4 bg-white/5 rounded" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </motion.div>
             </section>
 
             {/* Features Grid */}
@@ -170,7 +119,7 @@ export const Landing = () => {
                             {
                                 icon: <Lock className="w-8 h-8 text-amber-500" />,
                                 title: "Admin Controls",
-                                desc: "Multi-layered role permissions ensuring critical deal strategies are reviewed and approved by management."
+                                desc: "Admin role ensuring critical deal strategies are reviewed."
                             }
                         ].map((feature, i) => (
                             <div key={i} className="bg-[#0B1219] p-10 rounded-[2.5rem] border border-white/5 hover:border-blue-500/30 transition-all group">
@@ -245,12 +194,12 @@ export const Landing = () => {
                         <span className="font-bold text-xl tracking-tight italic">NegoPack <span className="text-blue-500">Pro</span></span>
                     </div>
 
-                    <div className="flex gap-8 text-sm font-medium text-gray-400">
-                        <p>&copy; 2026 NegoPack Pro Malaysia. All Rights Reserved.</p>
-                        <div className="flex items-center gap-2 border-l border-white/10 pl-8 ml-auto">
-                            <img src={kadoshLogo} alt="KadoshAI" className="w-6 h-6 rounded-md object-cover" />
-                            <span className="text-white font-bold tracking-tight">KadoshAI</span>
-                        </div>
+                    <div className="flex items-center gap-2 text-sm font-medium text-gray-400">
+                        <p>Copyright &copy; 2026</p>
+                        <img src={kadoshLogo} alt="KadoshAI" className="w-6 h-6 rounded-md object-cover" />
+                        <span className="text-gray-400">.</span>
+                        <p className="text-white font-bold">KadoshAI</p>
+                        <p>All rights reserved.</p>
                     </div>
 
                     <div className="flex gap-6">

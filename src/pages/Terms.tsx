@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, ArrowLeft, Scale, Lock, ShieldCheck, Gavel, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import kadoshLogo from '../components/image/kadosh_ai_logo.jpeg';
 
 export const Terms = () => {
     return (
@@ -88,8 +89,15 @@ export const Terms = () => {
                     </section>
                 </div>
 
-                <footer className="mt-20 pt-10 border-t border-white/5 text-center text-gray-500 text-sm">
-                    <p>&copy; 2026 NegoPack Pro Malaysia. All legal disputes shall be subject to the exclusive jurisdiction of the Courts of Malaysia.</p>
+                <footer className="mt-20 pt-10 border-t border-white/5 flex flex-col items-center gap-4">
+                    <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                        <p>Copyright &copy; 2026</p>
+                        <img src={kadoshLogo} alt="KadoshAI" className="w-5 h-5 rounded-sm object-cover" />
+                        <span className="text-gray-500">.</span>
+                        <p className="text-white font-bold">KadoshAI</p>
+                        <p>All rights reserved.</p>
+                    </div>
+                    <p className="text-gray-600 text-[10px]">All legal disputes shall be subject to the exclusive jurisdiction of the Courts of Malaysia.</p>
                 </footer>
             </div>
         </div>

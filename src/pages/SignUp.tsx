@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Mail, Lock, User, Building2, ArrowRight, CheckCircle2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Shield, Mail, Lock, User, Building2, ArrowRight, CheckCircle2, AlertCircle, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../components/ToastProvider';
@@ -10,12 +10,13 @@ export const SignUp = () => {
     const { showToast } = useToast();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
-        role: 'employee',
-        department: '',
+        role: 'admin',
         password: '',
         confirmPassword: ''
     });
@@ -38,7 +39,6 @@ export const SignUp = () => {
                 options: {
                     data: {
                         full_name: formData.fullName,
-                        department: formData.department,
                         role: formData.role
                     },
                     emailRedirectTo: `${window.location.origin}/login`
@@ -151,34 +151,15 @@ export const SignUp = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-2 hidden">
                                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Account Role</label>
                                 <div className="relative group">
                                     <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
-                                    <select
-                                        className="w-full bg-[#161F2A] border border-white/5 rounded-xl py-3 pl-11 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all appearance-none cursor-pointer"
-                                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                                        value={formData.role}
-                                    >
-                                        <option value="employee">Employee (User)</option>
-                                        <option value="admin">Admin (Manager)</option>
-                                    </select>
+                                    <input type="hidden" value="admin" />
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Team/Dept</label>
-                                <div className="relative group">
-                                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder="Procurement"
-                                        className="w-full bg-[#161F2A] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all placeholder:text-gray-600"
-                                        onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                                    />
-                                </div>
-                            </div>
+
 
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Email</label>
@@ -195,16 +176,23 @@ export const SignUp = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Encryption Key</label>
+                                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Password</label>
                                 <div className="relative group">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
                                     <input
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         required
                                         placeholder="Password"
-                                        className="w-full bg-[#161F2A] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all placeholder:text-gray-600"
+                                        className="w-full bg-[#161F2A] border border-white/5 rounded-xl py-3 pl-11 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all placeholder:text-gray-600"
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-500 transition-colors"
+                                    >
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
                                 </div>
                             </div>
 
@@ -213,12 +201,19 @@ export const SignUp = () => {
                                 <div className="relative group">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
                                     <input
-                                        type="password"
+                                        type={showConfirmPassword ? "text" : "password"}
                                         required
                                         placeholder="Confirm"
-                                        className="w-full bg-[#161F2A] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all placeholder:text-gray-600"
+                                        className="w-full bg-[#161F2A] border border-white/5 rounded-xl py-3 pl-11 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all placeholder:text-gray-600"
                                         onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-500 transition-colors"
+                                    >
+                                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -240,13 +235,13 @@ export const SignUp = () => {
                             disabled={loading}
                             className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl mt-4 flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20 group disabled:opacity-50"
                         >
-                            {loading ? "Creating Account..." : "Initial Account Setup"}
+                            {loading ? "Creating Account..." : "Create Account"}
                             {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
                         </button>
 
                         <div className="text-center mt-6">
                             <p className="text-gray-500 text-sm">
-                                Existing professional? <Link to="/login" className="text-blue-500 font-semibold hover:underline">Sign In Here</Link>
+                                Existing account? <Link to="/login" className="text-blue-500 font-semibold hover:underline">Sign In Here</Link>
                             </p>
                         </div>
                     </form>

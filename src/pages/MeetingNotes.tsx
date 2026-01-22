@@ -140,8 +140,7 @@ export const MeetingNotes = () => {
         }
     };
 
-    const isAdmin = profile?.role === 'admin';
-    const canEdit = isAdmin || deal?.status === 'approved' || deal?.status === 'meeting_done';
+    const canEdit = deal?.status === 'approved' || deal?.status === 'meeting_done' || deal?.status === 'pack_generated';
 
     const updateDealStatus = async (status: string, feedback: string | null = null) => {
         setSaving(true);
@@ -340,45 +339,62 @@ export const MeetingNotes = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        {canEdit && (
-                            <button
+                        {deal?.status === 'approved' && (
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-8 rounded-2xl flex items-center gap-3 transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50"
+                                className="group relative bg-blue-600 hover:bg-blue-700 text-white p-3.5 rounded-2xl flex items-center justify-center transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50"
                             >
                                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                                Save Meeting Notes
-                            </button>
+                                <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                    Save Notes
+                                </span>
+                            </motion.button>
                         )}
 
-                        {isAdmin && deal?.status === 'meeting_done' && (
+                        {deal?.status === 'meeting_done' && (
                             <>
-                                <button
+                                <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
                                     onClick={() => updateDealStatus('approved', 'Meeting notes revision required.')}
                                     disabled={saving}
-                                    className="px-6 py-3.5 rounded-2xl border border-amber-500/20 text-amber-500 hover:bg-amber-500/5 transition-all text-sm font-bold disabled:opacity-50"
+                                    className="group relative p-3.5 rounded-2xl border border-amber-500/20 text-amber-500 hover:bg-amber-500/5 transition-all disabled:opacity-50"
                                 >
-                                    Request Note Changes
-                                </button>
-                                <button
+                                    <AlertCircle className="w-5 h-5" />
+                                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                        Request Note Changes
+                                    </span>
+                                </motion.button>
+                                <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
                                     onClick={() => updateDealStatus('completed')}
                                     disabled={saving}
-                                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-8 rounded-2xl flex items-center gap-3 transition-all shadow-xl shadow-green-500/20 disabled:opacity-50"
+                                    className="group relative bg-green-600 hover:bg-green-700 text-white p-3.5 rounded-2xl flex items-center justify-center transition-all shadow-xl shadow-green-500/20 disabled:opacity-50"
                                 >
-                                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-5 h-5" />}
-                                    Mark as Completed
-                                </button>
+                                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle2 className="w-5 h-5" />}
+                                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                        Mark as Completed
+                                    </span>
+                                </motion.button>
                             </>
                         )}
 
                         {(deal?.status === 'completed' || deal?.status === 'meeting_done') && (
-                            <button
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                                 onClick={exportMeetingReport}
-                                className="bg-white/5 hover:bg-white/10 text-white border border-white/10 font-bold py-3.5 px-8 rounded-2xl flex items-center gap-3 transition-all"
+                                className="group relative bg-white/5 hover:bg-white/10 text-white border border-white/10 p-3.5 rounded-2xl flex items-center justify-center transition-all"
                             >
-                                Export Pack
                                 <Download className="w-5 h-5" />
-                            </button>
+                                <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                    Export Pack
+                                </span>
+                            </motion.button>
                         )}
                     </div>
                 </header>

@@ -8,13 +8,14 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const MotionLink = motion(Link);
+
 export const Deals = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [deals, setDeals] = useState<any[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedStatus, setSelectedStatus] = useState<string>('all');
-    const [profile, setProfile] = useState<any>(null);
 
     useEffect(() => {
         fetchData();
@@ -25,19 +26,11 @@ export const Deals = () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
 
-            const { data: prof } = await supabase.from('users').select('*').eq('id', user.id).single();
-            setProfile(prof);
-
-            let query = supabase
+            const { data, error } = await supabase
                 .from('deals')
                 .select('*, suppliers(name)')
                 .order('created_at', { ascending: false });
 
-            if (prof?.role !== 'admin') {
-                query = query.eq('owner_id', user.id);
-            }
-
-            const { data, error } = await query;
             if (error) throw error;
             setDeals(data || []);
         } catch (error) {
@@ -102,22 +95,28 @@ export const Deals = () => {
                     <p className="text-gray-400">Track and manage every stage of your strategic negotiations</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={downloadDeals}
-                        className="bg-white/5 hover:bg-white/10 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all border border-white/5"
+                        className="group relative bg-white/5 hover:bg-white/10 text-white p-3 rounded-xl flex items-center justify-center transition-all border border-white/5"
                     >
                         <Download className="w-5 h-5" />
-                        Download CSV
-                    </button>
-                    {profile?.role !== 'admin' && (
-                        <Link
-                            to="/new-deal"
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20"
-                        >
-                            <Plus className="w-5 h-5" />
+                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                            Download CSV
+                        </span>
+                    </motion.button>
+                    <MotionLink
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        to="/new-deal"
+                        className="group relative bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl flex items-center justify-center transition-all shadow-lg shadow-blue-500/20"
+                    >
+                        <Plus className="w-5 h-5" />
+                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
                             Create Deal
-                        </Link>
-                    )}
+                        </span>
+                    </MotionLink>
                 </div>
             </header>
 
@@ -169,12 +168,7 @@ export const Deals = () => {
                             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/[0.02] blur-3xl -mr-16 -mt-16 group-hover:bg-blue-500/[0.05] transition-all" />
 
                             <div className="flex items-center gap-6 relative z-10">
-                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white ${deal.status === 'completed' ? 'bg-emerald-600/20 text-emerald-500' :
-                                    deal.status === 'approved' ? 'bg-green-600/20 text-green-500' :
-                                        deal.status === 'meeting_done' ? 'bg-blue-600/20 text-blue-500' :
-                                            deal.status === 'rejected' ? 'bg-red-600/20 text-red-500' :
-                                                'bg-blue-600/20 text-blue-500'
-                                    }`}>
+                                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white bg-blue-600/20 text-blue-500">
                                     <FileText className="w-6 h-6" />
                                 </div>
                                 <div>
@@ -182,13 +176,7 @@ export const Deals = () => {
                                         <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">
                                             {deal.title}
                                         </h3>
-                                        <span className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest ${deal.status === 'completed' ? 'bg-emerald-500/10 text-emerald-500' :
-                                            deal.status === 'approved' ? 'bg-green-500/10 text-green-500' :
-                                                deal.status === 'meeting_done' ? 'bg-blue-500/10 text-blue-500' :
-                                                    deal.status === 'in_review' ? 'bg-amber-500/10 text-amber-500' :
-                                                        deal.status === 'rejected' ? 'bg-red-500/10 text-red-500' :
-                                                            'bg-blue-500/10 text-blue-500'
-                                            }`}>
+                                        <span className="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-500">
                                             {deal.status.replace('_', ' ')}
                                         </span>
                                     </div>

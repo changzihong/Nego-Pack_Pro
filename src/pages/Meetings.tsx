@@ -28,22 +28,13 @@ export const Meetings = () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
 
-            const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-
-            // Showing requested statuses: Meeting Done, Changes Requested, Completed, Rejected
-            let query = supabase
+            const { data, error } = await supabase
                 .from('deals')
                 .select('*, suppliers(name), meeting_notes(*)')
                 .in('status', ['meeting_done', 'changes_requested', 'completed', 'rejected'])
                 .order('created_at', { ascending: false });
 
-            if (profile?.role !== 'admin') {
-                query = query.eq('owner_id', user.id);
-            }
-
-            const { data, error } = await query;
             if (error) throw error;
-
             setMeetings(data || []);
         } catch (error) {
             console.error('Error fetching meetings:', error);
