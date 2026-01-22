@@ -14,22 +14,30 @@ export const Landing = () => {
             {/* Navigation */}
             <nav className="fixed top-0 left-0 right-0 z-50 bg-[#050A10]/80 backdrop-blur-md border-b border-white/5">
                 <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                            <Shield className="w-6 h-6 text-white" />
-                        </div>
-                        <span className="font-bold text-xl tracking-tight">NegoPack <span className="text-blue-500">Pro</span></span>
+                  
+                  {/* 1. Left Section (Logo) - flex-1 ensures it takes up space */}
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                      <Shield className="w-6 h-6 text-white" />
                     </div>
-
-                    <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
-                        <a href="#features" className="hover:text-white transition-colors">Features</a>
-                        <a href="#how-it-works" className="hover:text-white transition-colors">Workflow</a>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                    </div>
+                    <span className="font-bold text-xl tracking-tight">
+                      NegoPack <span className="text-blue-500">Pro</span>
+                    </span>
+                  </div>
+              
+                  {/* 2. Center Section (Links) - flex-initial + justify-center */}
+                  <div className="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-gray-400 flex-initial">
+                    <a href="#features" className="hover:text-white transition-colors">Features</a>
+                    <a href="#how-it-works" className="hover:text-white transition-colors">Workflow</a>
+                  </div>
+              
+                  {/* 3. Right Section (Actions) - flex-1 + justify-end to match the left side */}
+                  <div className="flex items-center justify-end gap-4 flex-1">
+                    {/* If you add a "Sign In" button later, it will stay on the right */}
+                  </div>
+                  
                 </div>
-            </nav>
+              </nav>
 
             {/* Hero Section */}
             <section className="relative pt-40 pb-24 px-6">
