@@ -26,16 +26,43 @@ export const Settings = () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
 
-            const { data: profile } = await supabase
+            // Try to get profile
+            const { data: profile, error } = await supabase
                 .from('users')
                 .select('*')
                 .eq('id', user.id)
                 .single();
 
+            if (error) {
+                // Self-healing: If profile missing (406 or PGRST116), create it
+                if (error.code === 'PGRST116' || (error as any).status === 406) {
+                    console.log("Profile missing, attempting to create...");
+                    const { data: newProfile, error: createError } = await supabase
+                        .from('users')
+                        .insert([{
+                            id: user.id,
+                            email: user.email,
+                            full_name: user.user_metadata?.full_name || 'Admin User',
+                            role: 'admin'
+                        }])
+                        .select()
+                        .single();
+
+                    if (createError) throw createError;
+
+                    setProfile(newProfile);
+                    setFullName(newProfile.full_name);
+                    showToast("Profile initialized successfully", "success");
+                    return;
+                }
+                throw error;
+            }
+
             setProfile(profile);
             setFullName(profile?.full_name || '');
         } catch (error) {
-            console.error('Error fetching profile:', error);
+            console.error('Error fetching/creating profile:', error);
+            // Don't show error toast immediately to avoid spamming if it's just a momentary glitch
         } finally {
             setLoading(false);
         }

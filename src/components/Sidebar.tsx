@@ -42,7 +42,7 @@ export const Sidebar = () => {
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
                     <Handshake className="w-5 h-5 text-white" />
                 </div>
-                <span className="font-bold text-lg tracking-tight">NegoPack <span className="text-blue-500">Pro</span></span>
+                <span className="font-bold text-lg tracking-tight">My NegoPack <span className="text-blue-500">Pro</span></span>
             </div>
 
             <nav className="flex-1 space-y-2">
@@ -89,7 +89,7 @@ export const Sidebar = () => {
                     </div>
                     <div className="flex-1 overflow-hidden">
                         <p className="text-sm font-bold truncate">{profile?.full_name || 'User'}</p>
-                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{profile?.role || 'Employee'}</p>
+                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">ADMIN</p>
                     </div>
                 </div>
                 <button

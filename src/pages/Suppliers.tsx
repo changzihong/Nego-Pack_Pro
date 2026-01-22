@@ -76,6 +76,9 @@ export const Suppliers = () => {
     const handleSaveSupplier = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("Not authenticated");
+
             if (editingSupplier) {
                 const { error } = await supabase
                     .from('suppliers')
@@ -84,7 +87,10 @@ export const Suppliers = () => {
                 if (error) throw error;
                 showToast('Supplier updated successfully!', 'success');
             } else {
-                const { error } = await supabase.from('suppliers').insert([supplierForm]);
+                const { error } = await supabase.from('suppliers').insert([{
+                    ...supplierForm,
+                    owner_id: user.id
+                }]);
                 if (error) throw error;
                 showToast('Supplier added successfully!', 'success');
             }
