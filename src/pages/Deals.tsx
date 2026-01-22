@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import {
     Search, Filter, Plus, ChevronRight, FileText,
     CheckCircle2, Clock, XCircle, Loader2, TrendingUp,
-    Briefcase, Download, Trash2
+    Briefcase, Download
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -79,30 +79,6 @@ export const Deals = () => {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-    };
-
-    const handleDeleteDeal = async (e: React.MouseEvent, dealId: string, dealTitle: string) => {
-        e.stopPropagation();
-
-        const confirmed = window.confirm(
-            `Are you sure you want to delete "${dealTitle}"? This action cannot be undone.`
-        );
-
-        if (!confirmed) return;
-
-        try {
-            const { error } = await supabase
-                .from('deals')
-                .delete()
-                .eq('id', dealId);
-
-            if (error) throw error;
-
-            setDeals(prevDeals => prevDeals.filter(deal => deal.id !== dealId));
-        } catch (error) {
-            console.error('Error deleting deal:', error);
-            alert('Failed to delete deal. Please try again.');
-        }
     };
 
     if (loading) return (
@@ -221,15 +197,6 @@ export const Deals = () => {
                                     <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest mb-1">Created</p>
                                     <p className="text-sm font-bold text-white">{new Date(deal.created_at).toLocaleDateString()}</p>
                                 </div>
-                                <motion.button
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.9 }}
-                                    onClick={(e) => handleDeleteDeal(e, deal.id, deal.title)}
-                                    className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-all"
-                                    title="Delete deal"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </motion.button>
                                 <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-white group-hover:translate-x-1 transition-all" />
                             </div>
                         </motion.div>
