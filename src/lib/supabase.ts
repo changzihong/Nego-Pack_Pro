@@ -1,4 +1,10 @@
-// Database disconnected - Supabase client is disabled
-// To re-enable, install @supabase/supabase-js and configure environment variables
+import { createClient } from '@supabase/supabase-js';
 
-export const supabase = null as any;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('Supabase URL or Anon Key is missing in .env');
+}
+
+export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
