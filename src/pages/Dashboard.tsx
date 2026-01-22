@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Search, Filter, LayoutDashboard, Handshake, Users, FileText, Settings, LogOut, ChevronRight, CheckCircle2, AlertCircle, Clock, XCircle, TrendingUp, BarChart3, PieChart, Building2 } from 'lucide-react';
+import { Plus, Search, Filter, LayoutDashboard, Handshake, Users, FileText, Settings, LogOut, ChevronRight, CheckCircle2, AlertCircle, Clock, XCircle, TrendingUp, BarChart3, PieChart, Building2, Trash2, Download } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../components/ToastProvider';
@@ -15,6 +15,8 @@ export const Dashboard = () => {
     const [profile, setProfile] = useState<any>(null);
     const [deals, setDeals] = useState<any[]>([]);
     const [hoveredModel, setHoveredModel] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
     const [stats, setStats] = useState({
         total: 0,
         pending: 0,
@@ -72,7 +74,7 @@ export const Dashboard = () => {
             // Calculate stats
             const total = dealsList.length;
             const pending = dealsList.filter(d => d.status === 'in_review').length;
-            const approvedCount = dealsList.filter(d => d.status === 'approved' || d.status === 'completed' || d.status === 'meeting_done').length;
+            const approvedCount = dealsList.filter(d => d.status === 'approved' || d.status === 'completed').length;
             const upcoming = dealsList.filter(d => d.deadline && new Date(d.deadline) > new Date()).length;
 
             const totalValue = dealsList.reduce((acc, curr) => acc + Number(curr.deal_value || 0), 0);
@@ -108,9 +110,42 @@ export const Dashboard = () => {
         }
     };
 
+
+    const handleDeleteDeal = async (e: React.MouseEvent, dealId: string) => {
+        e.stopPropagation();
+        if (!confirm('Are you sure you want to delete this negotiation? This action cannot be undone.')) return;
+
+        try {
+            const { error } = await supabase
+                .from('deals')
+                .delete()
+                .eq('id', dealId);
+
+            if (error) throw error;
+            showToast("Negotiation deleted successfully", "success");
+            fetchDeals();
+        } catch (error) {
+            console.error('Error deleting deal:', error);
+            showToast("Failed to delete negotiation", "error");
+        }
+    };
+
     const handleLogout = async () => {
         await supabase.auth.signOut();
         navigate('/login');
+    };
+
+    const filteredDeals = deals.filter(deal => {
+        const matchesSearch =
+            deal.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            deal.suppliers?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesStatus = statusFilter === 'all' || deal.status === statusFilter;
+        return matchesSearch && matchesStatus;
+    });
+
+    const downloadFullPipeline = () => {
+        showToast("Generating pipeline report...", "info");
+        // Simplified export logic for demonstration
     };
 
     if (loading) {
@@ -128,17 +163,6 @@ export const Dashboard = () => {
                     <h1 className="text-3xl font-bold mb-2">Negotiation Dashboard</h1>
                     <p className="text-gray-400">Manage and track strategic deal packs across your pipeline</p>
                 </div>
-                <MotionLink
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    to="/new-deal"
-                    className="group relative bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl flex items-center justify-center transition-all shadow-lg shadow-blue-500/20"
-                >
-                    <Plus className="w-5 h-5" />
-                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                        New Deal
-                    </span>
-                </MotionLink>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
@@ -398,82 +422,144 @@ export const Dashboard = () => {
                 </motion.div>
             </div>
 
-            <div className="flex items-center gap-4 mb-6">
-                <div className="flex-1 relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                    <input
-                        type="text"
-                        placeholder="Search negotiations, suppliers..."
-                        className="w-full bg-[#0B1219] border border-white/5 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium text-white placeholder:text-gray-600"
-                    />
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h2 className="text-4xl font-black text-white tracking-tight mb-2">Deal Pipeline</h2>
+                    <p className="text-gray-500 font-medium">Track and manage every stage of your strategic negotiations</p>
                 </div>
-                <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="group relative p-3 bg-[#0B1219] border border-white/5 rounded-xl text-gray-400 hover:text-white transition-colors"
-                >
-                    <Filter className="w-5 h-5" />
-                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                        Filter List
-                    </span>
-                </motion.button>
+                <div className="flex items-center gap-3">
+                    <motion.button
+                        whileHover="hover"
+                        initial="rest"
+                        animate="rest"
+                        onClick={downloadFullPipeline}
+                        className="flex items-center p-3 bg-white/[0.03] border border-white/5 rounded-2xl text-gray-400 hover:text-white transition-all shadow-lg overflow-hidden cursor-pointer"
+                    >
+                        <Download className="w-5 h-5 shrink-0" />
+                        <motion.span
+                            variants={{
+                                rest: { width: 0, opacity: 0, marginLeft: 0 },
+                                hover: { width: "auto", opacity: 1, marginLeft: 12, marginRight: 4 }
+                            }}
+                            className="font-bold text-sm whitespace-nowrap overflow-hidden"
+                        >
+                            Download Pipeline
+                        </motion.span>
+                    </motion.button>
+                    <MotionLink
+                        whileHover="hover"
+                        initial="rest"
+                        animate="rest"
+                        to="/new-deal"
+                        className="flex items-center bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-2xl font-bold transition-all shadow-xl shadow-blue-500/20 overflow-hidden"
+                    >
+                        <Plus className="w-5 h-5 shrink-0" />
+                        <motion.span
+                            variants={{
+                                rest: { width: 0, opacity: 0, marginLeft: 0 },
+                                hover: { width: "auto", opacity: 1, marginLeft: 10, marginRight: 4 }
+                            }}
+                            className="text-sm whitespace-nowrap overflow-hidden"
+                        >
+                            Create Deal
+                        </motion.span>
+                    </MotionLink>
+                </div>
             </div>
 
-            <div className="bg-[#0B1219] rounded-2xl border border-white/5 overflow-hidden">
-                <table className="w-full border-collapse">
-                    <thead>
-                        <tr className="border-b border-white/5 bg-white/[0.01]">
-                            <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Deal Title</th>
-                            <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Supplier</th>
-                            <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Value</th>
-                            <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Status</th>
-                            <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Deadline</th>
-                            <th className="px-6 py-4 text-right"></th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                        {deals.length === 0 ? (
-                            <tr>
-                                <td colSpan={6} className="px-6 py-20 text-center">
-                                    <div className="flex flex-col items-center gap-3 text-gray-500">
-                                        <FileText className="w-10 h-10 opacity-20" />
-                                        <p>No negotiations found</p>
-                                        <Link to="/new-deal" className="text-blue-500 text-sm font-bold hover:underline">Create your first deal</Link>
-                                    </div>
-                                </td>
-                            </tr>
-                        ) : (
-                            deals.map((deal) => (
-                                <tr
-                                    key={deal.id}
-                                    className="hover:bg-white/[0.02] transition-colors group cursor-pointer"
-                                    onClick={() => navigate((deal.status === 'draft' || deal.status === 'changes_requested' || deal.status === 'rejected') ? `/new-deal?id=${deal.id}` : `/pack/${deal.id}`)}
-                                >
-                                    <td className="px-6 py-6">
-                                        <p className="font-semibold text-white group-hover:text-blue-400 transition-colors">{deal.title}</p>
-                                    </td>
-                                    <td className="px-6 py-6 text-gray-400">{deal.suppliers?.name || 'N/A'}</td>
-                                    <td className="px-6 py-6 font-medium text-white">
+            <div className="flex flex-col md:flex-row items-center gap-4 mb-8">
+                <div className="flex-1 relative w-full">
+                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
+                    <input
+                        type="text"
+                        placeholder="Search deals, suppliers..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-[#0B1219] border border-white/5 rounded-[1.25rem] py-4 pl-14 pr-6 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium text-white placeholder:text-gray-600 shadow-inner"
+                    />
+                </div>
+                <div className="relative w-full md:w-64">
+                    <Filter className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="w-full appearance-none bg-[#0B1219] border border-white/5 rounded-[1.25rem] py-4 pl-12 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-white text-sm cursor-pointer shadow-inner"
+                    >
+                        <option value="all">All Statuses</option>
+                        <option value="draft">Draft</option>
+                        <option value="pack_generated">Pack Generated</option>
+                    </select>
+                    <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600 rotate-90 pointer-events-none" />
+                </div>
+            </div>
+
+            <div className="space-y-4 pb-20">
+                {filteredDeals.length === 0 ? (
+                    <div className="bg-[#0B1219] rounded-3xl border border-white/5 p-20 text-center">
+                        <div className="flex flex-col items-center gap-4 text-gray-600">
+                            <FileText className="w-12 h-12 opacity-10" />
+                            <p className="font-medium">No active deals match your current view</p>
+                            <button onClick={() => { setSearchTerm(''); setStatusFilter('all'); }} className="text-blue-500 text-sm font-bold hover:underline">Clear all filters</button>
+                        </div>
+                    </div>
+                ) : (
+                    filteredDeals.map((deal) => (
+                        <motion.div
+                            key={deal.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            whileHover={{ scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.02)" }}
+                            className="group bg-[#0B1219] rounded-[2rem] border border-white/5 p-6 flex items-center gap-6 cursor-pointer transition-all shadow-lg"
+                            onClick={() => navigate((deal.status === 'draft' || deal.status === 'rejected') ? `/new-deal?id=${deal.id}` : `/pack/${deal.id}`)}
+                        >
+                            <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center border border-blue-500/10 shrink-0 shadow-inner group-hover:bg-blue-600/20 transition-colors">
+                                <FileText className="w-8 h-8 text-blue-500" />
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <h3 className="text-xl font-bold text-white truncate group-hover:text-blue-400 transition-colors">{deal.title}</h3>
+                                    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.15em] ${deal.status === 'pack_generated' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
+                                        deal.status === 'approved' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
+                                            deal.status === 'rejected' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
+                                                'bg-gray-500/10 text-gray-400 border border-white/5'
+                                        }`}>
+                                        {deal.status.replace('_', ' ')}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-4 text-sm font-semibold text-gray-500">
+                                    <span className="text-gray-300">{deal.suppliers?.name || 'N/A'}</span>
+                                    <span className="w-1 h-1 rounded-full bg-gray-700" />
+                                    <span className="text-gray-400">
                                         {deal.deal_value ? `RM ${Number(deal.deal_value).toLocaleString()}` : '—'}
-                                    </td>
-                                    <td className="px-6 py-6">
-                                        <div className="flex items-center gap-2">
-                                            <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 bg-blue-500/10 text-blue-500">
-                                                {deal.status.replace('_', ' ')}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-6 text-gray-400">
-                                        {deal.deadline ? new Date(deal.deadline).toLocaleDateString('en-MY') : '—'}
-                                    </td>
-                                    <td className="px-6 py-6 text-right">
-                                        <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-white transition-colors" />
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                                    </span>
+                                    <span className="w-1 h-1 rounded-full bg-gray-700" />
+                                    <div className="flex items-center gap-2">
+                                        <TrendingUp className="w-4 h-4 text-blue-500/40" />
+                                        <span>{deal.pricing_model || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="text-right hidden md:block px-4">
+                                <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-1">Created</p>
+                                <p className="text-lg font-bold text-white">{new Date(deal.created_at).toLocaleDateString()}</p>
+                            </div>
+
+                            <div className="flex items-center gap-2 pr-2">
+                                <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={(e) => handleDeleteDeal(e, deal.id)}
+                                    className="p-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100 shadow-lg"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </motion.button>
+                                <ChevronRight className="w-6 h-6 text-gray-700 group-hover:text-blue-500 transition-colors" />
+                            </div>
+                        </motion.div>
+                    ))
+                )}
             </div>
         </div>
     );

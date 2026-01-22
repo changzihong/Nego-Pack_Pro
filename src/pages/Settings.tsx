@@ -208,14 +208,25 @@ export const Settings = () => {
 
                 <div className="flex justify-end">
                     <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover="hover"
+                        initial="rest"
+                        animate="rest"
                         type="submit"
                         disabled={saving}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50"
+                        className="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 overflow-hidden cursor-pointer"
                     >
-                        {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                        Save All Changes
+                        <div className="flex items-center justify-center w-5 h-5 shrink-0">
+                            {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                        </div>
+                        <motion.span
+                            variants={{
+                                rest: { width: 0, opacity: 0, marginLeft: 0 },
+                                hover: { width: "auto", opacity: 1, marginLeft: 10, marginRight: 2 }
+                            }}
+                            className="text-sm font-bold whitespace-nowrap overflow-hidden"
+                        >
+                            Save All Changes
+                        </motion.span>
                     </motion.button>
                 </div>
             </form>

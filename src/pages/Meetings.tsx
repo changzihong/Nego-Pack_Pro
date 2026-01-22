@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Calendar, MapPin, ChevronRight, Search, FileText, Loader2 } from 'lucide-react';
+import { Clock, Calendar, MapPin, ChevronRight, Search, FileText, Loader2, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const Meetings = () => {
@@ -40,6 +40,23 @@ export const Meetings = () => {
             console.error('Error fetching meetings:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteMeeting = async (e: React.MouseEvent, dealId: string) => {
+        e.stopPropagation();
+        if (!confirm('Are you sure you want to delete this deal documentation? This will delete the deal and its associated notes.')) return;
+
+        try {
+            const { error } = await supabase
+                .from('deals')
+                .delete()
+                .eq('id', dealId);
+
+            if (error) throw error;
+            fetchMeetings();
+        } catch (error) {
+            console.error('Error deleting meeting:', error);
         }
     };
 
@@ -150,7 +167,17 @@ export const Meetings = () => {
                                     </div>
                                 </div>
                             </div>
-                            <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                            <div className="flex items-center gap-4">
+                                <motion.button
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={(e) => handleDeleteMeeting(e, deal.id)}
+                                    className="p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </motion.button>
+                                <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                            </div>
                         </motion.div>
                     ))
                 )}

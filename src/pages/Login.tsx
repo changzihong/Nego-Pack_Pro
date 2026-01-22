@@ -28,7 +28,7 @@ export const Login = () => {
 
             if (loginError) throw loginError;
 
-            navigate('/dashboard');
+            navigate('/suppliers');
         } catch (err: any) {
             setError(err.message || "An error occurred during login");
         } finally {

@@ -111,6 +111,8 @@ export const Suppliers = () => {
         setAddingSupplier(true);
     };
 
+
+
     const filteredSuppliers = suppliers.filter(s =>
         s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.category?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -130,19 +132,26 @@ export const Suppliers = () => {
                     <p className="text-gray-400">Manage your organization's list of strategic partners</p>
                 </div>
                 <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover="hover"
+                    initial="rest"
+                    animate="rest"
                     onClick={() => {
                         setEditingSupplier(null);
                         setSupplierForm({ name: '', contact_person: '', email: '', phone: '', category: '' });
                         setAddingSupplier(true);
                     }}
-                    className="group relative bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl flex items-center justify-center transition-all shadow-lg shadow-blue-500/20"
+                    className="flex items-center bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl transition-all shadow-lg shadow-blue-500/20 overflow-hidden cursor-pointer"
                 >
-                    <PlusCircle className="w-5 h-5" />
-                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                    <PlusCircle className="w-5 h-5 shrink-0" />
+                    <motion.span
+                        variants={{
+                            rest: { width: 0, opacity: 0, marginLeft: 0 },
+                            hover: { width: "auto", opacity: 1, marginLeft: 10, marginRight: 2 }
+                        }}
+                        className="text-xs font-bold whitespace-nowrap overflow-hidden uppercase tracking-widest"
+                    >
                         Add New Supplier
-                    </span>
+                    </motion.span>
                 </motion.button>
             </header>
 
@@ -182,15 +191,6 @@ export const Suppliers = () => {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
                                         <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors truncate">{supplier.name}</h3>
-                                        <button
-                                            onClick={() => startEdit(supplier)}
-                                            className="group relative p-1.5 rounded-lg bg-white/5 text-gray-500 hover:text-white hover:bg-blue-600/20 transition-all"
-                                        >
-                                            <Edit2 className="w-3.5 h-3.5" />
-                                            <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[8px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                                                Edit
-                                            </span>
-                                        </button>
                                     </div>
                                     <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">{supplier.category || 'Uncategorized'}</span>
                                 </div>
@@ -304,27 +304,41 @@ export const Suppliers = () => {
                                 </div>
                                 <div className="pt-4 flex gap-4">
                                     <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
+                                        whileHover="hover"
+                                        initial="rest"
+                                        animate="rest"
                                         type="button"
                                         onClick={() => setAddingSupplier(false)}
-                                        className="group relative flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center"
+                                        className="flex items-center justify-center bg-white/5 hover:bg-white/10 text-white font-bold py-3 px-4 rounded-xl transition-all overflow-hidden cursor-pointer min-w-[50px]"
                                     >
-                                        <X className="w-5 h-5" />
-                                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                        <X className="w-5 h-5 shrink-0" />
+                                        <motion.span
+                                            variants={{
+                                                rest: { width: 0, opacity: 0, marginLeft: 0 },
+                                                hover: { width: "auto", opacity: 1, marginLeft: 10, marginRight: 2 }
+                                            }}
+                                            className="text-xs font-bold whitespace-nowrap overflow-hidden uppercase tracking-widest"
+                                        >
                                             Cancel
-                                        </span>
+                                        </motion.span>
                                     </motion.button>
                                     <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
+                                        whileHover="hover"
+                                        initial="rest"
+                                        animate="rest"
                                         type="submit"
-                                        className="group relative flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center"
+                                        className="flex-1 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg shadow-blue-500/20 overflow-hidden cursor-pointer"
                                     >
-                                        <Handshake className="w-5 h-5" />
-                                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                                        <Handshake className="w-5 h-5 shrink-0" />
+                                        <motion.span
+                                            variants={{
+                                                rest: { width: 0, opacity: 0, marginLeft: 0 },
+                                                hover: { width: "auto", opacity: 1, marginLeft: 10, marginRight: 2 }
+                                            }}
+                                            className="text-xs font-bold whitespace-nowrap overflow-hidden uppercase tracking-widest"
+                                        >
                                             {editingSupplier ? 'Update Changes' : 'Save Supplier'}
-                                        </span>
+                                        </motion.span>
                                     </motion.button>
                                 </div>
                             </form>
